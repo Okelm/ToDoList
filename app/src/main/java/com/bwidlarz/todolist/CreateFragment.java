@@ -24,12 +24,14 @@ public class CreateFragment extends Fragment{
 
     private static final int REQUEST_CODE = 0 ;
     public static int timePicked = 10;
+
     EditText titleView;
     EditText descView;
     Button dataPickerButton;
     Button timePickerButton;
     TextView dateView;
     TextView timeView;
+    EditText imageView;
 
     int year = 0;
     int month = 0;
@@ -64,6 +66,7 @@ public class CreateFragment extends Fragment{
         descView = (EditText) view.findViewById(R.id.editDescViewCreate);
         dateView = (TextView) view.findViewById(R.id.textViewForDate);
         timeView = (TextView) view.findViewById(R.id.textViewForTime);
+        imageView = (EditText) view.findViewById(R.id.imageEditText);
 
         try{
             floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +81,7 @@ public class CreateFragment extends Fragment{
                         taskEntity.setTitle(titleView.getText().toString());
                         taskEntity.setDescription(descView.getText().toString());
                         taskEntity.setEndTime(buildTheDate());
+                        taskEntity.setImageUrl(imageView.getText().toString());
 
 
                         SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getActivity());

@@ -115,17 +115,39 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/linearDueTime"
+            android:id="@+id/linearImage"
+            android:layout_marginTop="10dp"
+            android:weightSum="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Paste image URL:"
+                    android:layout_gravity="left"
+                    android:id="@+id/imageTextView"/>
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageEditText"
+                    android:hint="paste image url right there"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="opis"
+                    android:id="@+id/imageUrlView"/>
+        </LinearLayout>
     </RelativeLayout>
     </ScrollView>
-
     <android.support.design.widget.FloatingActionButton
     android:id="@+id/fab2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom|end"
     android:src="@android:drawable/ic_input_add"
-    android:tint="@android:color/white"
-     />
-
+    android:tint="@android:color/white"/>
 </FrameLayout>
 
