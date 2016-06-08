@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ public class EditingFragment extends Fragment {
     Button timePickerButton;
     String timeAndDate;
     TextView timeAndDateView;
+    EditText urlView;
 
     int year = 0;
     int month = 0;
@@ -83,12 +85,13 @@ public class EditingFragment extends Fragment {
         titleView = (TextView) view.findViewById(R.id.editTitleView) ;
         descView = (EditText) view.findViewById(R.id.editDescView) ;
         timeAndDateView = (TextView) view.findViewById(R.id.currentDueTimeData);
+        urlView = (EditText) view.findViewById(R.id.imageEditText);
 
         try{
             SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getActivity());
             SQLiteDatabase db = taskDatabaseHelper.getReadableDatabase();
             Cursor cursor = db.query("TASK",
-                    new String[]{"TITLE", "DESCRIPTION", "TIME_END"},
+                    new String[]{"TITLE", "DESCRIPTION", "TIME_END", "URL"},
                     "_id = ?",
                     new String[] {Integer.toString(item_id)},
                     null,null,null);
@@ -97,10 +100,12 @@ public class EditingFragment extends Fragment {
                 String titleText = cursor.getString(0);
                 String descText = cursor.getString(1);
                 Long timeText = cursor.getLong(2);
+                String urlText = cursor.getString(3);
 
                 titleView.setText(titleText);
                 descView.setText(descText);
                 timeAndDateView.setText(unbindTheDate(timeText));
+                urlView.setText(urlText);
             }
             cursor.close();
             db.close();
@@ -133,7 +138,7 @@ public class EditingFragment extends Fragment {
         descView = (EditText) view.findViewById(R.id.editDescView);
         dateView = (TextView) view.findViewById(R.id.textViewForDateEditing);
         timeView = (TextView) view.findViewById(R.id.textViewForTimeEditing);
-
+        urlView = (EditText) view.findViewById(R.id.imageEditText);
 
         try{
 
@@ -154,6 +159,9 @@ public class EditingFragment extends Fragment {
                             taskEntity.setEndTime(buildTheDate());
                         }
 
+                        if (!(urlView.length()==0)){
+                            taskEntity.setImageUrl(urlView.getText().toString());
+                        }
                         SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getActivity());
                         SQLiteDatabase db = taskDatabaseHelper.getWritableDatabase();
                         TaskDao taskDao =new TaskDao(db);

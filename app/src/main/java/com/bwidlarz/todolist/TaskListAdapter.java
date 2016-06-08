@@ -43,7 +43,11 @@ public class TaskListAdapter extends CursorAdapter {
 
         titleView.setText(title);
         timeEndView.setText(translateTheDate(timeEnd));
-        Picasso.with(context).load(url).resize(50, 50).into(imageView);
+        Picasso.with(context)
+                .load(url)
+                .resize(50, 50)
+                .error(R.drawable.error)
+                .into(imageView);
     }//"https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/6.10.png"
 
     private String translateTheDate(Long timeEnd) {
