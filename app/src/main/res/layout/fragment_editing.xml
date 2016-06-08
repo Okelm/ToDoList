@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/currentDueTimeData"
-                        android:text="current timedata"/>
+                        android:text="Not set. Update it below!"/>
             </LinearLayout>
 
 
@@ -84,12 +84,12 @@
                 android:orientation="horizontal"
                 android:layout_below="@id/linearCurrent"
                 android:id="@+id/linearDueDate"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:weightSum="1">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Set due date:"
+                    android:text="Update due date:"
                     android:layout_weight="1"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -100,7 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Set date"
-
+                    android:layout_gravity="right"
                     android:id="@+id/dataPickerButtonEditing" />
 
             </LinearLayout>
@@ -110,19 +110,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_below="@id/linearDueDate"
                 android:id="@+id/linearDueTime"
+                android:layout_below="@id/linearDueDate"
                 android:layout_marginTop="10dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Set due time:"
+                    android:text="Update due time:"
                     android:layout_weight="1"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
                     android:id="@+id/textViewForTimeEditing"
-                    android:layout_weight="2" />
+                    />
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -153,7 +154,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/imageEditText"
-                    android:hint="paste image url right there"/>
+                    android:hint="paste image url right there"
+                    />
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

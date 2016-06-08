@@ -80,7 +80,9 @@ public class CreateFragment extends Fragment{
                         Task taskEntity = new Task();
                         taskEntity.setTitle(titleView.getText().toString());
                         taskEntity.setDescription(descView.getText().toString());
-                        taskEntity.setEndTime(buildTheDate());
+                        if(dateView.getText().toString().length()>0 && timeView.getText().toString().length() >0){
+                            taskEntity.setEndTime(buildTheDate());
+                        }
                         if (!(urlView.length()==0)){
                             taskEntity.setImageUrl(urlView.getText().toString());
                         }
@@ -149,6 +151,8 @@ public class CreateFragment extends Fragment{
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(hours);
             stringBuilder.append(":");
+            if (minutes<10){
+                stringBuilder.append("0"); }
             stringBuilder.append(minutes);
 
             timeshow.setText(stringBuilder.toString());

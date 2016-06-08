@@ -42,7 +42,9 @@ public class TaskListAdapter extends CursorAdapter {
         String url = cursor.getString(cursor.getColumnIndexOrThrow("URL"));
 
         titleView.setText(title);
-        timeEndView.setText(translateTheDate(timeEnd));
+        if(timeEnd>0){
+            timeEndView.setText(translateTheDate(timeEnd));
+        }
         Picasso.with(context)
                 .load(url)
                 .resize(50, 50)

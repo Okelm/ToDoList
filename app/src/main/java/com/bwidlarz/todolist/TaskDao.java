@@ -14,19 +14,19 @@ public class TaskDao implements Dao<Task> {
 
     private SQLiteDatabase db;
 
-    public TaskDao(SQLiteDatabase db){
-        this.db=db;
+    public TaskDao(SQLiteDatabase db) {
+        this.db = db;
     }
 
     @Override
     public long save(Task entity) {
         ContentValues taskValue = new ContentValues();
-        taskValue.put("TITLE",entity.getTitle());
-        taskValue.put("DESCRIPTION",entity.getDescription());
-        taskValue.put("CREATED",entity.getCreated());
-        taskValue.put("TIME_END",entity.getEndTime());
-        taskValue.put("URL",entity.getImageUrl());
-        db.insert(TaskTable.TABLE_NAME,null, taskValue);
+        taskValue.put("TITLE", entity.getTitle());
+        taskValue.put("DESCRIPTION", entity.getDescription());
+        taskValue.put("CREATED", entity.getCreated());
+        taskValue.put("TIME_END", entity.getEndTime());
+        taskValue.put("URL", entity.getImageUrl());
+        db.insert(TaskTable.TABLE_NAME, null, taskValue);
         return 0;
     }
 
@@ -34,10 +34,12 @@ public class TaskDao implements Dao<Task> {
     public void update(Task entity) {
 
         ContentValues taskValue = new ContentValues();
-        taskValue.put("TITLE",entity.getTitle());
-        taskValue.put("DESCRIPTION",entity.getDescription());
-        taskValue.put("CREATED",entity.getCreated());
-        taskValue.put("TIME_END",entity.getEndTime());
+        taskValue.put("TITLE", entity.getTitle());
+        taskValue.put("DESCRIPTION", entity.getDescription());
+        taskValue.put("CREATED", entity.getCreated());
+        if (entity.getEndTime() > 0){
+            taskValue.put("TIME_END",entity.getEndTime());
+        }
         taskValue.put("URL",entity.getImageUrl());
 
         db.update(TaskTable.TABLE_NAME,

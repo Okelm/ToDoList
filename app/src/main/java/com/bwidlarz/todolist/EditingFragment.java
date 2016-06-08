@@ -2,8 +2,6 @@ package com.bwidlarz.todolist;
 
 
 import android.app.FragmentManager;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.SimpleDateFormat;
@@ -104,7 +101,9 @@ public class EditingFragment extends Fragment {
 
                 titleView.setText(titleText);
                 descView.setText(descText);
-                timeAndDateView.setText(unbindTheDate(timeText));
+                if (timeText>0){
+                    timeAndDateView.setText(unbindTheDate(timeText));
+                }
                 urlView.setText(urlText);
             }
             cursor.close();
@@ -155,7 +154,7 @@ public class EditingFragment extends Fragment {
                         taskEntity.setDescription(descView.getText().toString());
                         taskEntity.setProviderId(item_id);
 
-                        if(dateView.getText().toString().length()>0 && timeView.getText().toString().length() >0){
+                        if(dateView.getText().toString().length()>1 && timeView.getText().toString().length() >1){
                             taskEntity.setEndTime(buildTheDate());
                         }
 
@@ -180,16 +179,6 @@ public class EditingFragment extends Fragment {
         }
 
     }
-    public String createDate(long timestamp) {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(timestamp);
-        Date d = c.getTime();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        return sdf.format(d).toString();
-
-    }
-
 
     private void settingPickerForTimeAndDate(View view) {
 
@@ -226,7 +215,7 @@ public class EditingFragment extends Fragment {
         View v = getView();
 
         if (requestCode == TimePickerFragment.REQUEST_CODE) {
-            TextView timeshow = (TextView) v.findViewById(R.id.textViewForTimeEditing);
+            TextView timeShow = (TextView) v.findViewById(R.id.textViewForTimeEditing);
 
             hours = data.getIntExtra("hourOfDay",hours);
             minutes = data.getIntExtra("minute", minutes);
@@ -234,13 +223,15 @@ public class EditingFragment extends Fragment {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(hours);
             stringBuilder.append(":");
+            if (minutes<10){
+                stringBuilder.append("0"); }
             stringBuilder.append(minutes);
 
-            timeshow.setText(stringBuilder.toString());
+            timeShow.setText(stringBuilder.toString());
         }
 
         if (requestCode == DataPickerFragment.REQUEST_CODE) {
-            TextView timeshow = (TextView) v.findViewById(R.id.textViewForDateEditing);
+            TextView dateShow = (TextView) v.findViewById(R.id.textViewForDateEditing);
 
             year = data.getIntExtra("year",year);
             month = data.getIntExtra("month", month);
@@ -253,7 +244,7 @@ public class EditingFragment extends Fragment {
             stringBuilder.append("/");
             stringBuilder.append(year);
 
-            timeshow.setText(stringBuilder.toString());
+            dateShow.setText(stringBuilder.toString());
         }
     }
 

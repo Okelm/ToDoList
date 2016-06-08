@@ -17,8 +17,8 @@ public Task(){
     private long providerId;
     private String title;
     private String description;
-    private Long  created;
-    private Long endTime;
+    private long  created;
+    private long endTime;
     private String imageUrl;
 
     public long getProviderId() {
