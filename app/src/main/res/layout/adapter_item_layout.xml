@@ -5,8 +5,9 @@
     android:orientation="horizontal"
     android:id="@+id/linear">
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
 
     <TextView
@@ -23,5 +24,14 @@
         android:layout_gravity="center_horizontal"
         android:layout_below="@+id/titleViewAdapter"
         />
+
+
     </RelativeLayout>
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/imageViewAdapter"
+        android:src="@drawable/imagedef"
+        android:contentDescription="describtionContent"
+        android:layout_weight="1"/>
 </LinearLayout>

@@ -32,11 +32,13 @@ public class TaskTable {
         insertTask(db, "Run for a while", "Need to run a bit, a bit longer than yesterday",
                 System.currentTimeMillis(), "1420917972", "https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/11.10.png");
         insertTask(db, "Refactor the code", "Looks messy, do something with it",
-                System.currentTimeMillis(), "1520917972", "https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/11.10.png");
+                System.currentTimeMillis(), "1520917972", "https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/9.10.png");
         insertTask(db, "Have a walk", "Stop staring at the monitor and have some walk",
-                System.currentTimeMillis(), "33620917972", "https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/11.10.png");
-
-
+                System.currentTimeMillis(), "33620917972", "https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/27.10.png");
+        insertTask(db, "Wash the dishes", "Start with forks",
+                System.currentTimeMillis(), "188620917972", "https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/27.10.png");
+        insertTask(db, "Call the mom", "Tell about last travel",
+                System.currentTimeMillis(), "1188620917972", "https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/27.10.png");
     }
 
     private static void insertTask(SQLiteDatabase db, String title, String description, long created, String endTime, String url) {

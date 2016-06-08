@@ -3,10 +3,15 @@ package com.bwidlarz.todolist;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,13 +35,16 @@ public class TaskListAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView titleView = (TextView) view.findViewById(R.id.titleViewAdapter);
         TextView timeEndView = (TextView) view.findViewById(R.id.timeEndViewAdapter);
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageViewAdapter);
 
         String title = cursor.getString(cursor.getColumnIndexOrThrow("TITLE"));
         Long timeEnd = cursor.getLong(cursor.getColumnIndexOrThrow("TIME_END"));
+        String url = cursor.getString(cursor.getColumnIndexOrThrow("URL"));
 
         titleView.setText(title);
         timeEndView.setText(translateTheDate(timeEnd));
-    }
+        Picasso.with(context).load(url).resize(50, 50).into(imageView);
+    }//"https://j7w7h8q2.ssl.hwcdn.net/achievements/ach_ipad/6.10.png"
 
     private String translateTheDate(Long timeEnd) {
         Calendar c = Calendar.getInstance();
