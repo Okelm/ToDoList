@@ -1,3 +1,3 @@
 # ToDoList
 
-Simple application for notes of what you have to do
+Simple application that you can use to note your TODO stuff
