@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Dell on 2016-06-05.
  */
@@ -57,12 +60,16 @@ public class TaskDao implements Dao<Task> {
     public Task get(long id) {
 
         Cursor cursor = db.query("TASK",
-                new String[]{"TITLE", "DESCRIPTION", "CREATED","TIME_END", "URL"},
+                new String[]{"_id","TITLE", "DESCRIPTION", "CREATED","TIME_END", "URL"},
                 "_id = ?",
                 new String[]{Long.toString(id)},
                 null, null, null);
 
         Task task = new Task();
+        if (cursor.moveToFirst()) {
+            task = buildTaskFromCursor(cursor);
+        }
+        /*
         if (cursor.moveToFirst()) {
             task.setProviderId(id);
             task.setTitle(cursor.getString(0));
@@ -71,7 +78,46 @@ public class TaskDao implements Dao<Task> {
             task.setEndTime(cursor.getLong(3));
             task.setImageUrl(cursor.getString(4));
         }
+        */
         cursor.close();
         return task;
     }
+
+    @Override
+    public List<Task> getAll() {
+            List<Task> list = new ArrayList<Task>();
+
+        Cursor cursor = db.query("TASK",
+                new String[]{"_id","TITLE", "DESCRIPTION", "CREATED","TIME_END", "URL"},
+                null,
+                null,
+                null, null, null);
+
+        Task task ;
+        if (cursor.moveToFirst()) {
+            do {
+                task = this.buildTaskFromCursor(cursor);
+                if (task != null) {
+                    list.add(task);
+                }
+            }while (cursor.moveToNext() );
+        }
+        cursor.close();
+        return list;
+    }
+
+    private Task buildTaskFromCursor(Cursor cursor) {
+        Task task = null;
+        if (cursor!=null){
+            task = new Task();
+            task.setProviderId(cursor.getLong(0));
+            task.setTitle(cursor.getString(1));
+            task.setDescription(cursor.getString(2));
+            task.setCreated(cursor.getLong(3));
+            task.setEndTime(cursor.getLong(4));
+            task.setImageUrl(cursor.getString(5));
+        }
+        return task;
+    }
+
 }
