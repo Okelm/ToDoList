@@ -26,6 +26,7 @@ import com.bwidlarz.todolist.Database.TaskDao;
 import com.bwidlarz.todolist.Database.TaskTable;
 import com.bwidlarz.todolist.Dialogs.DeletingAlert_Fragment;
 import com.bwidlarz.todolist.JSON.JSON;
+import com.bwidlarz.todolist.Notifications.NotificationHandler;
 import com.bwidlarz.todolist.R;
 import com.bwidlarz.todolist.Database.TaskDatabaseHelper;
 import com.google.gson.Gson;
@@ -37,6 +38,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements DeletingAlert_Fragment.NoticeDialogListener{
@@ -49,6 +52,13 @@ public class MainActivity extends AppCompatActivity
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         setFABClickListener(fab);
+
+/*
+        Intent intent = new Intent(this, NotificationHandler.class);
+        intent.putExtra(NotificationHandler.EXTRA_MESSAGE, "hahahahahahh działa!!!!1");
+        startService(intent);
+        */
+
     }
 
     @Override
@@ -152,67 +162,22 @@ public class MainActivity extends AppCompatActivity
                 return null;
             }
             private void startExport() throws FileNotFoundException {
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.setPrettyPrinting();
+                Gson gson = gsonBuilder.create();
                 SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getApplicationContext());
                 SQLiteDatabase db = taskDatabaseHelper.getReadableDatabase();
-                Cursor cursor = db.rawQuery("SELECT  * FROM "+ TaskTable.TABLE_NAME, null);
-
-                final   GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.registerTypeAdapter(Task.class, new JSON());
-                    gsonBuilder.setPrettyPrinting();
-                final   Gson gson = gsonBuilder.create();
-                StringBuilder stringBuilder = new StringBuilder();
-                    if (cursor .moveToFirst()) {
-
-                        while (cursor.isAfterLast() == false) {
-
-
-
-
-                    JSONObject root = new JSONObject();
-                    JSONArray taskArray = new JSONArray();
-
-                    // int i = 0;
-                    //while (!cursor.isAfterLast()) {
-
-
-                        JSONObject JSONtask = new JSONObject();
-                        //int id = cursor.getColumnIndexOrThrow("_id");
-                            final  TaskDao taskdao =new TaskDao(db);
-                           // final     Task currentTask = taskdao.get(id);
-
-                            Task testTask = new Task();
-                            testTask.setProviderId(cursor.getInt(0));
-                            testTask.setTitle(cursor.getString(1));
-                            testTask.setDescription(cursor.getString(2));testTask.setCreated(cursor.getLong(3));
-                            testTask.setEndTime(cursor.getLong(4));
-                            testTask.setImageUrl(cursor.getString(5));
-                            Log.d("Saving....", testTask.getTitle());
-
-
-
-                        JSON jsonSerializer = new JSON();
-
-
-                        String json = gson.toJson(testTask);
-                            //TODO zamist używać string buildera, który źle tworzy strukturę JSON, trzeba
-                            //stringBuilder.append(json);
-
-                            cursor.moveToNext();
-                        //}
-
-                }}
-
-                saveImageToExternalStorage(stringBuilder.toString());
+                TaskDao taskDao = new TaskDao(db);
+                List<Task> list = taskDao.getAll();
+                Log.d("JSON to export","dupa");
+                String json = gson.toJson(list);
+                saveImageToExternalStorage(json);
             }
-
-
-
-
-
 
             private void saveImageToExternalStorage(String json) {
                 String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
                 Log.d("JSON to export", json);
+                Log.i("JSON to export", json);
                 File myDir = new File(root + "/savedjsons");
                 myDir.mkdirs();
 
@@ -232,9 +197,6 @@ public class MainActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
 
-
-                // Tell the media scanner about the new file so that it is
-                // immediately available to the user.
                 MediaScannerConnection.scanFile(getApplicationContext(), new String[] { file.toString() }, null,
                         new MediaScannerConnection.OnScanCompletedListener() {
                             public void onScanCompleted(String path, Uri uri) {
@@ -245,14 +207,10 @@ public class MainActivity extends AppCompatActivity
 
             }
 
-
-
-
-
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                Toast toast = Toast.makeText(getApplicationContext(), "asf", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), "zapisana", Toast.LENGTH_LONG);
                 toast.show();
             }
         }

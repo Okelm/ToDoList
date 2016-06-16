@@ -55,8 +55,12 @@ public class TaskList extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        cursor.close();
-        db.close();
+        if (cursor!=null) {
+             cursor.close();
+        }
+        if (db!=null) {
+            db.close();
+        }
     }
 
     private void populateTheListView() {
