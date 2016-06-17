@@ -10,9 +10,8 @@ import android.util.Log;
 import java.util.Calendar;
 
 public class NotificationStartupReceiver extends BroadcastReceiver {
-    int intervalNotification = 1*60*60*1000;
-    @Override
 
+    @Override
     public void onReceive(Context context, Intent intent) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -24,8 +23,7 @@ public class NotificationStartupReceiver extends BroadcastReceiver {
                 PendingIntent.FLAG_CANCEL_CURRENT);
         Calendar now = Calendar.getInstance();
         now.add(Calendar.MINUTE, 1);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(),intervalNotification, sender);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(),AlarmManager.INTERVAL_HALF_DAY, sender);
         Log.d("receiver", "działa");
-
     }
 }

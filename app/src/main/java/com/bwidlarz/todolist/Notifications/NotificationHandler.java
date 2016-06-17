@@ -70,11 +70,7 @@ public class NotificationHandler extends IntentService {
                 if (task.getEndTime() < time) {
                     Log.d("checkTheDuedates", " time end!");
                     createDuedateNotification(task);
-                    try {
-                        wait(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
                 }
             }
         }finally {
