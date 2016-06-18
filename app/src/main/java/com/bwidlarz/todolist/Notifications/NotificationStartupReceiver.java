@@ -22,8 +22,12 @@ public class NotificationStartupReceiver extends BroadcastReceiver {
                 newIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, 1);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(),AlarmManager.INTERVAL_HALF_DAY, sender);
+        now.add(Calendar.MINUTE, 5);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                now.getTimeInMillis(),
+                AlarmManager.INTERVAL_HALF_DAY,
+                sender);
         Log.d("receiver", "działa");
+
     }
 }
