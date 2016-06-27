@@ -1,19 +1,19 @@
 package com.bwidlarz.todolist.Acitivities;
 
 import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,37 +21,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bwidlarz.todolist.Database.Results;
 import com.bwidlarz.todolist.Database.Task;
 import com.bwidlarz.todolist.Database.TaskDao;
-import com.bwidlarz.todolist.Database.TaskTable;
-import com.bwidlarz.todolist.Dialogs.DeletingAlert_Fragment;
-import com.bwidlarz.todolist.JSON.JSON;
-import com.bwidlarz.todolist.Notifications.NotificationHandler;
-import com.bwidlarz.todolist.R;
 import com.bwidlarz.todolist.Database.TaskDatabaseHelper;
+import com.bwidlarz.todolist.Dialogs.DeletingAlert_Fragment;
+import com.bwidlarz.todolist.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements DeletingAlert_Fragment.NoticeDialogListener{
 
+
+
     static String fileName = "myBlog.json";
+    public static String sortingListViewOption = "Default";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        refreshTheList("Default");
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         setFABClickListener(fab);
+
 
 /*
         Intent intent = new Intent(this, NotificationHandler.class);
@@ -72,14 +76,29 @@ public class MainActivity extends AppCompatActivity
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.JSONExport_item:
-
-                    new ExportJson().execute();
-
+                new ExportJson().execute();
                 return true;
-
+            case R.id.JSONImport_item:
+                new ImportJson().execute();
+                return true;
+            case R.id.SortByName:
+                refreshTheList("SortByName");
+                return true;
+            case R.id.SortByDate:
+                refreshTheList("SortByDate");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void refreshTheList(String sortBy) {
+        sortingListViewOption =  sortBy;
+        TaskList taskList = new TaskList();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container2, taskList);
+        ft.setTransition(FragmentTransaction.TRANSIT_NONE);
+        ft.commit();
     }
 
     private void setFABClickListener(FloatingActionButton fab) {
@@ -87,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startEditingAcitivity();
+                    startEditingActivity();
                 }
             });
         }
@@ -102,7 +121,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void startEditingAcitivity() {
+    private void startEditingActivity() {
         Intent intent = new Intent(MainActivity.this, EditingActivity.class);
         intent.putExtra(EditingActivity.EXTRA_INFO, 0);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -127,10 +146,7 @@ public class MainActivity extends AppCompatActivity
             Toast toast = Toast.makeText(getApplicationContext(), "delete Title nie działa", Toast.LENGTH_LONG);
             toast.show();
         }
-
        refreshTheActivity();
-
-
     }
 
     private void refreshTheActivity() {
@@ -144,10 +160,6 @@ public class MainActivity extends AppCompatActivity
         Toast toast = Toast.makeText(getApplicationContext(), "Delete when the Task is done! :)", Toast.LENGTH_LONG);
         toast.show();
     }
-
-
-
-
 
         class ExportJson extends AsyncTask<Context,Void, String>{
 
@@ -168,25 +180,23 @@ public class MainActivity extends AppCompatActivity
                 SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getApplicationContext());
                 SQLiteDatabase db = taskDatabaseHelper.getReadableDatabase();
                 TaskDao taskDao = new TaskDao(db);
-                List<Task> list = taskDao.getAll();
-                Log.d("JSON to export","dupa");
-                String json = gson.toJson(list);
-                saveImageToExternalStorage(json);
+
+                List<Task> listTemp = taskDao.getAll();
+                Results results= new Results(listTemp);
+
+                String json = gson.toJson(results);
+                saveJsonToExternalStorage(json);
             }
 
-            private void saveImageToExternalStorage(String json) {
+            private void saveJsonToExternalStorage(String json) {
                 String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-                Log.d("JSON to export", json);
-                Log.i("JSON to export", json);
                 File myDir = new File(root + "/savedjsons");
                 myDir.mkdirs();
-
 
                 String fname = "JsonTest.json";
                 File file = new File(myDir, fname);
                 if (file.exists())
                     file.delete();
-
                 try {
                     FileOutputStream out = new FileOutputStream(file);
                     out.write(json.getBytes());
@@ -196,7 +206,6 @@ public class MainActivity extends AppCompatActivity
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-
                 MediaScannerConnection.scanFile(getApplicationContext(), new String[] { file.toString() }, null,
                         new MediaScannerConnection.OnScanCompletedListener() {
                             public void onScanCompleted(String path, Uri uri) {
@@ -204,7 +213,6 @@ public class MainActivity extends AppCompatActivity
                                 Log.i("ExternalStorage", "-> uri=" + uri);
                             }
                         });
-
             }
 
             @Override
@@ -214,4 +222,53 @@ public class MainActivity extends AppCompatActivity
                 toast.show();
             }
         }
+
+    private class ImportJson extends AsyncTask<Context,Void, String>{
+        @Override
+        protected String doInBackground(Context... params) {
+            return startImport();
+        }
+
+        private String startImport() {
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setPrettyPrinting();
+            Gson gson = gsonBuilder.create();
+
+            String json = loadJSONFromAsset();
+            //List<Task> list = gson.fromJson(json);
+            return json;
+        }
+
+
+        public String loadJSONFromAsset() {
+            String json = null;
+            try {
+                String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+                //InputStream is = getApplicationContext().getAssets().open(root + "/savedjsons/JsonTest.json");
+                InputStream is = new FileInputStream(root + "/savedjsons/JsonTest.json");
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+                json = new String(buffer, "UTF-8");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return null;
+            }
+            return json;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            //Toast toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
+            //toast.show();
+
+            Gson gson = new GsonBuilder().create();
+            Results results = gson.fromJson(s, Results.class);
+            Toast toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
 }

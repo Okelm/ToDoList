@@ -5,7 +5,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
-import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -54,27 +53,58 @@ public class NotificationHandler extends IntentService {
             SQLiteDatabase db = taskDatabaseHelper.getReadableDatabase();
             Log.d("onHandleIntent", "db start");
             TaskDao taskDao = new TaskDao(db);
-            List<Task> tasks = taskDao.getAll();
+            List<Task> list = taskDao.getAll();
+
+
+
+
+
             Log.d("onHandleIntent", "list of task");
-            checkTheDuedates(tasks);
+            //checkForLateDuedates(tasks);
+            checkForTodayTask(list);
         }
         String text = intent.getStringExtra(EXTRA_MESSAGE);
         //showText(text);
     }
 
-    private void checkTheDuedates(List<Task> tasks) {
-        Log.d("checkTheDuedates", " start");
+    private void checkForTodayTask(List<Task> tasks) {
+        Log.d("checkForTodayTask", " start");
         try {
+            int numberOfTasks = 0;
+            String exampleOfTitle = null;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (Task task : tasks) {
+                long currentTime = System.currentTimeMillis();
+                long endTime = task.getEndTime();
+                if ((endTime-currentTime)< 86400000 && (endTime-currentTime)>0) {
+                    Log.d("checkForTodayTask", " its Today!");
+                    numberOfTasks++;
+                    stringBuilder.append(task.getTitle());
+                    stringBuilder.append(", ");
+                }
+            }
+            String desc = stringBuilder.toString();
+            createDuedateNotification("Tasks for today: " + numberOfTasks, desc);
+
+        }finally {
+            AlarmReceiver.releaseLock();
+            stopSelf();
+        }
+    }
+
+
+
+    private void checkForLateDuedates(List<Task> tasks) {
+        Log.d("checkForLateDuedates", " start");
+        try {
+            int numberOfTasks = 0;
             long time = System.currentTimeMillis();
             for (Task task : tasks) {
                 if (task.getEndTime() < time) {
-                    Log.d("checkTheDuedates", " time end!");
-                    createDuedateNotification(task);
-                    try {
-                        wait(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    Log.d("checkForLateDuedates", " time end!");
+                    //createDuedateNotification(task.getTitle(), task);
+
                 }
             }
         }finally {
@@ -83,7 +113,7 @@ public class NotificationHandler extends IntentService {
         }
     }
 
-    private void createDuedateNotification(Task task) {
+    private void createDuedateNotification(String title, String desc) {
         Log.d("createDuedateNotif", " start");
         Intent intent = new Intent(this, MainActivity.class);
         TaskStackBuilder stackBuilder = null;
@@ -95,16 +125,18 @@ public class NotificationHandler extends IntentService {
             PendingIntent pendingIntent =
                     stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             Log.d("createDuedateNotif", " notif building ....");
+
+
+
             Notification notification = new Notification
                     .Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(task.getTitle())
-                    .setContentInfo(task.getDescription())
+                    .setContentTitle(title)
                     .setAutoCancel(false)
                     .setPriority(Notification.PRIORITY_MAX)
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(pendingIntent)
-                    .setContentText(task.getDescription())
+                    .setContentText(desc)
                     .build();
             Log.d("createDuedateNotif", " notif built");
             NotificationManager notificationManager =
