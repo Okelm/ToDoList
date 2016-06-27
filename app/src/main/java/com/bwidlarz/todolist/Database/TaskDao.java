@@ -83,9 +83,10 @@ public class TaskDao implements Dao<Task> {
         return task;
     }
 
+
     @Override
     public List<Task> getAll() {
-            List<Task> list = new ArrayList<Task>();
+        List<Task> list = new ArrayList<Task>();
 
         Cursor cursor = db.query("TASK",
                 new String[]{"_id","TITLE", "DESCRIPTION", "CREATED","TIME_END", "URL"},
@@ -105,6 +106,8 @@ public class TaskDao implements Dao<Task> {
         cursor.close();
         return list;
     }
+
+
 
     private Task buildTaskFromCursor(Cursor cursor) {
         Task task = null;

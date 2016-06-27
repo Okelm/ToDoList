@@ -10,5 +10,5 @@ public interface Dao<T> {
     void update(T type);
     void delete(T type);
     T get(long id);
-    List<T> getAll();
+    List<Task> getAll();
 }

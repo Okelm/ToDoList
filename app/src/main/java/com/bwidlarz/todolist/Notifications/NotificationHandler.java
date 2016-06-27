@@ -53,10 +53,15 @@ public class NotificationHandler extends IntentService {
             SQLiteDatabase db = taskDatabaseHelper.getReadableDatabase();
             Log.d("onHandleIntent", "db start");
             TaskDao taskDao = new TaskDao(db);
-            List<Task> tasks = taskDao.getAll();
+            List<Task> list = taskDao.getAll();
+
+
+
+
+
             Log.d("onHandleIntent", "list of task");
             //checkForLateDuedates(tasks);
-            checkForTodayTask(tasks);
+            checkForTodayTask(list);
         }
         String text = intent.getStringExtra(EXTRA_MESSAGE);
         //showText(text);
