@@ -52,7 +52,6 @@ public class TaskList extends Fragment {
     public void onResume() {
       super.onResume();
       populateTheListView();
-
     }
 
     @Override
@@ -124,7 +123,6 @@ public class TaskList extends Fragment {
 
     private void cursorSortByName(SQLiteDatabase db) {
 
-        String timeNow = String.valueOf(getActualTime());
         Cursor[] cursors = new Cursor[2];
         cursors[0] = db.rawQuery("SELECT  *" +
                         " FROM "+ TaskTable.TABLE_NAME +

@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,13 +13,19 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bwidlarz.todolist.Database.Results;
@@ -41,28 +48,110 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements DeletingAlert_Fragment.NoticeDialogListener{
 
-
-
+    int currentPosition = 0;
+    private String[] titles;
+    private ListView drawerList;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
     static String fileName = "myBlog.json";
     public static String sortingListViewOption = "Default";
+
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener{
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+    private void selectItem(int position) {
+        currentPosition = position;
+        switch (position){
+            case 0:
+                refreshTheList("SortByName");
+                break;
+            case 1:
+                refreshTheList("SortByDate");
+                break;
+            default:
+                refreshTheList("Default");
+        }
+        setActionBarTitle(position);
+        drawerLayout.closeDrawer(drawerList);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt("position", currentPosition);
+    }
+    //TODO backstackchangelistiner add
+
+    private void setActionBarTitle(int position) {
+        String title;
+        if (position == 0){
+            title = getResources().getString(R.string.app_name);
+        }else {
+            title = titles[position];
+        }
+        getSupportActionBar().setTitle(title);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        refreshTheList("Default");
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        setFABClickListener(fab);
-
-
+        setFABClickListener();
+        setNavigationDrawer();
+        if (savedInstanceState != null) {
+            currentPosition = savedInstanceState.getInt("position");
+            setActionBarTitle(currentPosition);
+        }else {
+            refreshTheList("Default");
+        }
 /*
         Intent intent = new Intent(this, NotificationHandler.class);
         intent.putExtra(NotificationHandler.EXTRA_MESSAGE, "hahahahahahh działa!!!!1");
         startService(intent);
         */
 
+    }
+
+    private void setNavigationDrawer() {
+        titles = getResources().getStringArray(R.array.titles);
+        drawerList = (ListView) findViewById(R.id.drawer);
+        drawerList.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_activated_1,titles));
+        drawerList.setOnItemClickListener(new DrawerItemClickListener());
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,
+                R.string.open_drawer,R.string.close_drawer){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+        drawerLayout.setDrawerListener(drawerToggle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
+        menu.findItem(R.id.JSONImport_item).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -74,6 +163,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
+        if(drawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
         switch (item.getItemId()) {
             case R.id.JSONExport_item:
                 new ExportJson().execute();
@@ -81,15 +173,27 @@ public class MainActivity extends AppCompatActivity
             case R.id.JSONImport_item:
                 new ImportJson().execute();
                 return true;
-            case R.id.SortByName:
-                refreshTheList("SortByName");
-                return true;
-            case R.id.SortByDate:
-                refreshTheList("SortByDate");
-                return true;
+//            case R.id.SortByName:
+//                refreshTheList("SortByName");
+//                return true;
+//            case R.id.SortByDate:
+//                refreshTheList("SortByDate");
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void refreshTheList(String sortBy) {
@@ -101,7 +205,8 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    private void setFABClickListener(FloatingActionButton fab) {
+    private void setFABClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         try{
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -270,5 +375,6 @@ public class MainActivity extends AppCompatActivity
             Toast toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
             toast.show();
         }
+
     }
 }
