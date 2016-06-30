@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.javacodegeeks.android.menu.MainActivity" >
+    tools:context="com.javacodegeeks.android.menu.MainActivity">
 
     <item
         android:id="@+id/JSONExport_item"
@@ -13,16 +13,16 @@
         android:orderInCategory="100"
         android:title="Import Json"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/SortByName"
-        android:orderInCategory="100"
-        android:title="Sort By Name"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/SortByDate"
-        android:orderInCategory="100"
-        android:title="Sort By Date"
-        app:showAsAction="never"/>
+    <!--<item-->
+        <!--android:id="@+id/SortByName"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="Sort By Name"-->
+        <!--app:showAsAction="never"/>-->
+    <!--<item-->
+        <!--android:id="@+id/SortByDate"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="Sort By Date"-->
+        <!--app:showAsAction="never"/>-->
 
 
 
