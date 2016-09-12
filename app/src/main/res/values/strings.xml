@@ -2,4 +2,12 @@
     <string name="app_name">ToDoList</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_editing">EditingActivity</string>
+    <string-array name="titles">
+        <item>Sort by Name</item>
+        <item>Sort by Date</item>
+
+    </string-array>
+    <string name="open_drawer">Open the drawer</string>
+    <string name="close_drawer">Close the drawer</string>
+
 </resources>

@@ -1,9 +1,8 @@
-package com.bwidlarz.todolist;
+package com.bwidlarz.todolist.Database;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by Dell on 2016-06-05.
@@ -11,14 +10,16 @@ import java.util.Locale;
 public class Task   {
 
 public Task(){
-    this.created = setCreated();
+    this.created = setCreatedNew();
 }
+
+
 
     private long providerId;
     private String title;
     private String description;
-    private Long  created;
-    private Long endTime;
+    private long  created;
+    private long endTime;
     private String imageUrl;
 
     public long getProviderId() {
@@ -65,9 +66,11 @@ public Task(){
         return sdf.format(d).toString();
     }
 
-    public Long setCreated() {
-        return   System.currentTimeMillis();
+    public void setCreated(Long created) {
+       this.created = created;
+
     }
+
 
     public String getImageUrl() {
         return imageUrl;
@@ -78,5 +81,9 @@ public Task(){
     }
 
 
+
+    private long setCreatedNew() {
+        return   System.currentTimeMillis();
+    }
 
 }

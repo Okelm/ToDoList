@@ -1,4 +1,4 @@
-package com.bwidlarz.todolist;
+package com.bwidlarz.todolist.Acitivities;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.bwidlarz.todolist.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

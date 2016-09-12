@@ -1,4 +1,4 @@
-package com.bwidlarz.todolist;
+package com.bwidlarz.todolist.Acitivities;
 
 
 import android.app.FragmentManager;
@@ -16,6 +16,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bwidlarz.todolist.Database.Task;
+import com.bwidlarz.todolist.Database.TaskDao;
+import com.bwidlarz.todolist.Database.TaskDatabaseHelper;
+
+import com.bwidlarz.todolist.R;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -24,12 +30,14 @@ public class CreateFragment extends Fragment{
 
     private static final int REQUEST_CODE = 0 ;
     public static int timePicked = 10;
+
     EditText titleView;
     EditText descView;
     Button dataPickerButton;
     Button timePickerButton;
     TextView dateView;
     TextView timeView;
+    EditText urlView;
 
     int year = 0;
     int month = 0;
@@ -64,6 +72,7 @@ public class CreateFragment extends Fragment{
         descView = (EditText) view.findViewById(R.id.editDescViewCreate);
         dateView = (TextView) view.findViewById(R.id.textViewForDate);
         timeView = (TextView) view.findViewById(R.id.textViewForTime);
+//        urlView = (EditText) view.findViewById(R.id.imageEditText);
 
         try{
             floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -77,8 +86,12 @@ public class CreateFragment extends Fragment{
                         Task taskEntity = new Task();
                         taskEntity.setTitle(titleView.getText().toString());
                         taskEntity.setDescription(descView.getText().toString());
-                        taskEntity.setEndTime(buildTheDate());
-
+                        if(dateView.getText().toString().length()>0 && timeView.getText().toString().length() >0){
+                            taskEntity.setEndTime(buildTheDate());
+                        }
+                        if (!(urlView.length()==0)){
+                            taskEntity.setImageUrl(urlView.getText().toString());
+                        }
 
                         SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getActivity());
                         SQLiteDatabase db = taskDatabaseHelper.getWritableDatabase();
@@ -144,6 +157,8 @@ public class CreateFragment extends Fragment{
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(hours);
             stringBuilder.append(":");
+            if (minutes<10){
+                stringBuilder.append("0"); }
             stringBuilder.append(minutes);
 
             timeshow.setText(stringBuilder.toString());

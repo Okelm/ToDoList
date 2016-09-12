@@ -1,16 +1,11 @@
-package com.bwidlarz.todolist;
+package com.bwidlarz.todolist.Acitivities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.widget.Toast;
 
 /**
  * Created by Dell on 2016-06-03.

@@ -1,30 +1,22 @@
-package com.bwidlarz.todolist;
+package com.bwidlarz.todolist.Acitivities;
 
 
-import android.app.Activity;
-import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.ListFragment;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bwidlarz.todolist.Database.TaskDatabaseHelper;
+import com.bwidlarz.todolist.Database.TaskTable;
+import com.bwidlarz.todolist.R;
 
 
 /**
@@ -47,7 +39,7 @@ public class TaskList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-              return  inflater.inflate(R.layout.fragment_task_list, container, false);
+            return  inflater.inflate(R.layout.fragment_task_list, container, false);
 
         //return super.onCreateView(inflater, container, savedInstanceState);
     }

@@ -1,11 +1,8 @@
-package com.bwidlarz.todolist;
+package com.bwidlarz.todolist.Acitivities;
 
 
 import android.app.FragmentManager;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -19,6 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bwidlarz.todolist.Database.Task;
+import com.bwidlarz.todolist.Database.TaskDao;
+import com.bwidlarz.todolist.Database.TaskDatabaseHelper;
+
+import com.bwidlarz.todolist.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,6 +43,7 @@ public class EditingFragment extends Fragment {
     Button timePickerButton;
     String timeAndDate;
     TextView timeAndDateView;
+    EditText urlView;
 
     int year = 0;
     int month = 0;
@@ -83,28 +88,24 @@ public class EditingFragment extends Fragment {
         titleView = (TextView) view.findViewById(R.id.editTitleView) ;
         descView = (EditText) view.findViewById(R.id.editDescView) ;
         timeAndDateView = (TextView) view.findViewById(R.id.currentDueTimeData);
+//        urlView = (EditText) view.findViewById(R.id.imageEditText);
 
         try{
             SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getActivity());
-            SQLiteDatabase db = taskDatabaseHelper.getReadableDatabase();
-            Cursor cursor = db.query("TASK",
-                    new String[]{"TITLE", "DESCRIPTION", "TIME_END"},
-                    "_id = ?",
-                    new String[] {Integer.toString(item_id)},
-                    null,null,null);
-            if(cursor.moveToFirst()){
-
-                String titleText = cursor.getString(0);
-                String descText = cursor.getString(1);
-                Long timeText = cursor.getLong(2);
-
-                titleView.setText(titleText);
-                descView.setText(descText);
-                timeAndDateView.setText(unbindTheDate(timeText));
-            }
-            cursor.close();
+            SQLiteDatabase db = taskDatabaseHelper.getWritableDatabase();
+            TaskDao taskDao =new TaskDao(db);
+            Task task= taskDao.get(item_id);
             db.close();
-        }catch (SQLiteException e){
+
+            titleView.setText(task.getTitle());
+            descView.setText(task.getDescription());
+            long timeText = task.getEndTime();
+            if (timeText>0){
+                    timeAndDateView.setText(unbindTheDate(timeText));
+            }
+            urlView.setText(task.getImageUrl());
+        }
+        catch (SQLiteException e){
             Toast toast = Toast.makeText(getActivity(), "Baza nie działa", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -133,7 +134,7 @@ public class EditingFragment extends Fragment {
         descView = (EditText) view.findViewById(R.id.editDescView);
         dateView = (TextView) view.findViewById(R.id.textViewForDateEditing);
         timeView = (TextView) view.findViewById(R.id.textViewForTimeEditing);
-
+//        urlView = (EditText) view.findViewById(R.id.imageEditText);
 
         try{
 
@@ -150,10 +151,13 @@ public class EditingFragment extends Fragment {
                         taskEntity.setDescription(descView.getText().toString());
                         taskEntity.setProviderId(item_id);
 
-                        if(dateView.getText().toString().length()>0 && timeView.getText().toString().length() >0){
+                        if(dateView.getText().toString().length()>1 && timeView.getText().toString().length() >1){
                             taskEntity.setEndTime(buildTheDate());
                         }
 
+                        if (!(urlView.length()==0)){
+                            taskEntity.setImageUrl(urlView.getText().toString());
+                        }
                         SQLiteOpenHelper taskDatabaseHelper = new TaskDatabaseHelper(getActivity());
                         SQLiteDatabase db = taskDatabaseHelper.getWritableDatabase();
                         TaskDao taskDao =new TaskDao(db);
@@ -172,16 +176,6 @@ public class EditingFragment extends Fragment {
         }
 
     }
-    public String createDate(long timestamp) {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(timestamp);
-        Date d = c.getTime();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        return sdf.format(d).toString();
-
-    }
-
 
     private void settingPickerForTimeAndDate(View view) {
 
@@ -218,7 +212,7 @@ public class EditingFragment extends Fragment {
         View v = getView();
 
         if (requestCode == TimePickerFragment.REQUEST_CODE) {
-            TextView timeshow = (TextView) v.findViewById(R.id.textViewForTimeEditing);
+            TextView timeShow = (TextView) v.findViewById(R.id.textViewForTimeEditing);
 
             hours = data.getIntExtra("hourOfDay",hours);
             minutes = data.getIntExtra("minute", minutes);
@@ -226,13 +220,15 @@ public class EditingFragment extends Fragment {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(hours);
             stringBuilder.append(":");
+            if (minutes<10){
+                stringBuilder.append("0"); }
             stringBuilder.append(minutes);
 
-            timeshow.setText(stringBuilder.toString());
+            timeShow.setText(stringBuilder.toString());
         }
 
         if (requestCode == DataPickerFragment.REQUEST_CODE) {
-            TextView timeshow = (TextView) v.findViewById(R.id.textViewForDateEditing);
+            TextView dateShow = (TextView) v.findViewById(R.id.textViewForDateEditing);
 
             year = data.getIntExtra("year",year);
             month = data.getIntExtra("month", month);
@@ -245,7 +241,7 @@ public class EditingFragment extends Fragment {
             stringBuilder.append("/");
             stringBuilder.append(year);
 
-            timeshow.setText(stringBuilder.toString());
+            dateShow.setText(stringBuilder.toString());
         }
     }
 

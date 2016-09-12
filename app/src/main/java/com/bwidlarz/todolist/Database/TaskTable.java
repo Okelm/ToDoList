@@ -1,4 +1,4 @@
-package com.bwidlarz.todolist;
+package com.bwidlarz.todolist.Database;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,7 +26,7 @@ public class TaskTable {
         db.execSQL("CREATE TABLE TASK (_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "TITLE TEXT, "
                 + "DESCRIPTION TEXT, "
-                + "CREATED REAL, "
+                + "CREATED DATETIME DEFAULT CURRENT_TIMESTAMP, "
                 + "TIME_END TEXT, "
                 + "URL TEXT);");
         insertTask(db, "Run for a while", "Need to run a bit, a bit longer than yesterday",
@@ -44,7 +44,7 @@ public class TaskTable {
         ContentValues taskValue = new ContentValues();
         taskValue.put("TITLE",title);
         taskValue.put("DESCRIPTION",description);
-        taskValue.put("CREATED",created);
+       // taskValue.put("CREATED",created);
         taskValue.put("TIME_END",endTime);
         taskValue.put("URL",url);
         db.insert("TASK",null, taskValue);

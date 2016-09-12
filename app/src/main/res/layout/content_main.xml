@@ -12,7 +12,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.bwidlarz.todolist.TaskList"
+        class="com.bwidlarz.todolist.Acitivities.TaskList"
         android:id="@+id/list_frag">
     </fragment>
 </RelativeLayout>
